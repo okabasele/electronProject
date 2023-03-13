@@ -1,5 +1,6 @@
 import React from 'react'
-import SideBar from '../../components/partials/SideBar'
+import SideBar from '../partials/SideBar'
+import Player from '../blocks/Player'
 
 const MainLayout = ({children}) => {
   return (
@@ -8,6 +9,7 @@ const MainLayout = ({children}) => {
     <div className="container">
     {children}
     </div>
+    <Player />
     </>
   )
 }

@@ -1,9 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-
 const Player = () => {
   const [index, setIndex] = useState(3);
   const [currentTime, setCurrentTime] = useState("0:00");
-  const [musicList, setMusicList] = useState([
+  const [pause, setPause] = useState(false);
+  const playerRef = useRef(null);
+  const timelineRef = useRef(null);
+  const playheadRef = useRef(null);
+  const hoverPlayheadRef = useRef(null);
+  const musicList = [
     {
       name: "Nice piano and ukulele",
       author: "Royalty",
@@ -32,29 +36,27 @@ const Player = () => {
       audio: "https://www.bensound.com/bensound-music/bensound-slowmotion.mp3",
       duration: "3:26",
     },
-  ]);
-  const [pause, setPause] = useState(false);
+  ];
   const currentSong = musicList[index];
-  const playerRef = useRef(null);
-  const timelineRef = useRef(null);
-  const playheadRef = useRef(null);
-  const hoverPlayheadRef = useRef(null);
-
+  console.log({playerRef, timelineRef, playheadRef, hoverPlayheadRef});
   useEffect(() => {
-    playerRef.addEventListener("timeupdate", timeUpdate, false);
-    playerRef.addEventListener("ended", nextSong, false);
-    timelineRef.addEventListener("click", changeCurrentTime, false);
-    timelineRef.addEventListener("mousemove", hoverTimeLine, false);
-    timelineRef.addEventListener("mouseout", resetTimeLine, false);
-  }, []);
+    const playButton = playerRef.current;
+    const timelineButton = timelineRef.current;
+    
+    console.log({playButton, timelineButton});
+    if (!playButton || !timelineButton ) return;
 
-  useEffect(() => {
+    playButton.addEventListener("timeupdate", timeUpdate, false);
+    playButton.addEventListener("ended", nextSong, false);
+    timelineButton.addEventListener("click", changeCurrentTime, false);
+    timelineButton.addEventListener("mousemove", hoverTimeLine, false);
+    timelineButton.addEventListener("mouseout", resetTimeLine, false);
     return () => {
-      playerRef.removeEventListener("timeupdate", timeUpdate);
-      playerRef.removeEventListener("ended", nextSong);
-      timelineRef.removeEventListener("click", changeCurrentTime);
-      timelineRef.removeEventListener("mousemove", hoverTimeLine);
-      timelineRef.removeEventListener("mouseout", resetTimeLine);
+      playButton.removeEventListener("timeupdate", timeUpdate);
+      playButton.removeEventListener("ended", nextSong);
+      timelineButton.removeEventListener("click", changeCurrentTime);
+      timelineButton.removeEventListener("mousemove", hoverTimeLine);
+      timelineButton.removeEventListener("mouseout", resetTimeLine);
     };
   }, []);
 
@@ -160,12 +162,12 @@ const Player = () => {
   return (<>
       <div className="card">
         <div className="current-song">
-          <audio ref={(ref) => (playerRef.current = ref)}>
+          <audio ref={playerRef}>
             <source src={currentSong.audio} type="audio/ogg" />
             Your browser does not support the audio element.
           </audio>
           <div className="img-wrap">
-            <img src={currentSong.img} />
+            <img src={currentSong.img} alt="song image" />
           </div>
           <span className="song-name">{currentSong.name}</span>
           <span className="song-autor">{currentSong.author}</span>
@@ -175,11 +177,11 @@ const Player = () => {
             <div className="end-time">{currentSong.duration}</div>
           </div>
 
-          <div ref={(ref) => (timelineRef.current = ref)} id="timeline">
-            <div ref={(ref) => (playheadRef.current = ref)} id="playhead"></div>
+          <div ref={timelineRef} id="timeline">
+            <div ref={playheadRef} id="playhead"></div>
             <div
-              ref={(ref) => (hoverPlayheadRef.current = ref)}
-              class="hover-playhead"
+              ref={hoverPlayheadRef}
+              className="hover-playhead"
               data-content="0:00"
             ></div>
           </div>
@@ -196,7 +198,7 @@ const Player = () => {
               {!pause ? (
                 <i className="fas fa-play"></i>
               ) : (
-                <i class="fas fa-pause"></i>
+                <i className="fas fa-pause"></i>
               )}
             </button>
             <button

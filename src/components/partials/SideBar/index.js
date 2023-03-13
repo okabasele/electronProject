@@ -125,7 +125,7 @@ const StyledLiHeader = styled.li`
   text-transform: uppercase;
 `;
 
-const StyledImage = styled.Image`
+const StyledImage = styled.img`
   width: 30px;
   height: 30px;
 `;
