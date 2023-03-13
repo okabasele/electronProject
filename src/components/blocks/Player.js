@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import styled from "styled-components";
 const Player = () => {
   const [index, setIndex] = useState(3);
   const [currentTime, setCurrentTime] = useState("0:00");
@@ -38,13 +39,12 @@ const Player = () => {
     },
   ];
   const currentSong = musicList[index];
-  console.log({playerRef, timelineRef, playheadRef, hoverPlayheadRef});
+
+
   useEffect(() => {
     const playButton = playerRef.current;
     const timelineButton = timelineRef.current;
-    
-    console.log({playButton, timelineButton});
-    if (!playButton || !timelineButton ) return;
+    if (!playButton || !timelineButton) return;
 
     playButton.addEventListener("timeupdate", timeUpdate, false);
     playButton.addEventListener("ended", nextSong, false);
@@ -61,48 +61,47 @@ const Player = () => {
   }, []);
 
   const changeCurrentTime = (e) => {
-    const duration = playerRef.duration;
+    const duration = playerRef.current.duration;
+    const timelineLeft = timelineRef.current.offsetLeft;
+    const timelineWidth = timelineRef.current.offsetWidth;
+    const userClickWidth = e.clientX - timelineLeft - 160;
 
-    const playheadWidth = timelineRef.offsetWidth;
-    const offsetWidht = timelineRef.offsetLeft;
-    const userClickWidht = e.clientX - offsetWidht;
+    const userClickWidthInPercent = (userClickWidth *100) / timelineWidth ;
 
-    const userClickWidhtInPercent = (userClickWidht * 100) / playheadWidth;
-
-    playheadRef.style.width = userClickWidhtInPercent + "%";
-    playerRef.currentTime = (duration * userClickWidhtInPercent) / 100;
+    playheadRef.current.style.width = userClickWidthInPercent + "%";
+    playerRef.current.currentTime = (duration * userClickWidthInPercent) / 100;
   };
 
   const hoverTimeLine = (e) => {
-    const duration = playerRef.duration;
+    const duration = playerRef.current.duration;
 
-    const playheadWidth = timelineRef.offsetWidth;
+    const timelineWidth = timelineRef.current.offsetWidth;
 
-    const offsetWidht = timelineRef.offsetLeft;
-    const userClickWidht = e.clientX - offsetWidht;
-    const userClickWidhtInPercent = (userClickWidht * 100) / playheadWidth;
+    const offsetWidth = timelineRef.current.offsetLeft;
+    const userClickWidth = e.clientX - offsetWidth - 160 ;
+    const userClickWidthInPercent = (userClickWidth *100)/ timelineWidth;
 
-    if (userClickWidhtInPercent <= 100) {
-      hoverPlayheadRef.style.width = userClickWidhtInPercent + "%";
+    if (userClickWidthInPercent <= 100) {
+      hoverPlayheadRef.current.style.width = userClickWidthInPercent + "%";
     }
 
-    const time = (duration * userClickWidhtInPercent) / 100;
+    const time = (duration * userClickWidthInPercent) / 100;
 
     if (time >= 0 && time <= duration) {
-      hoverPlayheadRef.dataset.content = formatTime(time);
+      hoverPlayheadRef.current.dataset.content = formatTime(time);
     }
   };
 
   const resetTimeLine = () => {
-    hoverPlayheadRef.style.width = 0;
+    hoverPlayheadRef.current.style.width = 0;
   };
 
   const timeUpdate = () => {
-    const duration = playerRef.duration;
-    const timelineWidth = timelineRef.offsetWidth - playheadRef.offsetWidth;
-    const playPercent = 100 * (playerRef.currentTime / duration);
-    playheadRef.style.width = playPercent + "%";
-    const newTime = formatTime(parseInt(playerRef.currentTime));
+    const duration = playerRef.current.duration;
+    const timelineWidth = timelineRef.current.offsetWidth - playheadRef.current.offsetWidth;
+    const playPercent = 100 * (playerRef.current.currentTime / duration);
+    playheadRef.current.style.width = playPercent + "%";
+    const newTime = formatTime(parseInt(playerRef.current.currentTime));
     setCurrentTime(newTime);
   };
 
@@ -120,14 +119,14 @@ const Player = () => {
   const updatePlayer = () => {
     const currentSong = musicList[index];
     const audio = new Audio(currentSong.audio);
-    playerRef.load();
+    playerRef.current.load();
   };
 
   const nextSong = () => {
     setIndex((index + 1) % musicList.length);
     updatePlayer();
     if (pause) {
-      playerRef.play();
+      playerRef.current.play();
     }
   };
 
@@ -135,7 +134,7 @@ const Player = () => {
     setIndex((index + musicList.length - 1) % musicList.length);
     updatePlayer();
     if (pause) {
-      playerRef.play();
+      playerRef.current.play();
     }
   };
 
@@ -143,9 +142,9 @@ const Player = () => {
     const currentSong = musicList[index];
     const audio = new Audio(currentSong.audio);
     if (!pause) {
-      playerRef.play();
+      playerRef.current.play();
     } else {
-      playerRef.pause();
+      playerRef.current.pause();
     }
     setPause(!pause);
   };
@@ -155,84 +154,222 @@ const Player = () => {
 
     updatePlayer();
     if (pause) {
-      playerRef.play();
+      playerRef.current.play();
     }
   };
 
-  return (<>
-      <div className="card">
-        <div className="current-song">
+  return (
+    <>
+      <StyledContainer>
+        <StyledContainerWrapper>
           <audio ref={playerRef}>
             <source src={currentSong.audio} type="audio/ogg" />
             Your browser does not support the audio element.
           </audio>
-          <div className="img-wrap">
-            <img src={currentSong.img} alt="song image" />
-          </div>
-          <span className="song-name">{currentSong.name}</span>
-          <span className="song-autor">{currentSong.author}</span>
+          <StyledImage src={currentSong.img} alt="song image" />
+          <StyledCenter>
+            <StyledSongInfo>
+              <StyledSongName>{currentSong.name}</StyledSongName>
+              <StyledSongAuthor>{currentSong.author}</StyledSongAuthor>
+            </StyledSongInfo>
+            <StyledControls>
+              <StyledButton
+                onClick={prevSong}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M.5 3.5A.5.5 0 0 0 0 4v8a.5.5 0 0 0 1 0V8.753l6.267 3.636c.54.313 1.233-.066 1.233-.697v-2.94l6.267 3.636c.54.314 1.233-.065 1.233-.696V4.308c0-.63-.693-1.01-1.233-.696L8.5 7.248v-2.94c0-.63-.692-1.01-1.233-.696L1 7.248V4a.5.5 0 0 0-.5-.5z" />
+                </svg>
+              </StyledButton>
 
-          <div className="time">
-            <div className="current-time">{currentTime}</div>
-            <div className="end-time">{currentSong.duration}</div>
-          </div>
+              <StyledButton onClick={playOrPause}>
+                {!pause ? (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z" />
+                  </svg>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z" />
+                  </svg>
+                )}
+              </StyledButton>
+              <StyledButton
+                onClick={nextSong}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M7.596 7.304a.802.802 0 0 1 0 1.392l-6.363 3.692C.713 12.69 0 12.345 0 11.692V4.308c0-.653.713-.998 1.233-.696l6.363 3.692Z" />
+                  <path d="M15.596 7.304a.802.802 0 0 1 0 1.392l-6.363 3.692C8.713 12.69 8 12.345 8 11.692V4.308c0-.653.713-.998 1.233-.696l6.363 3.692Z" />
+                </svg>
+              </StyledButton>
+            </StyledControls>
 
-          <div ref={timelineRef} id="timeline">
-            <div ref={playheadRef} id="playhead"></div>
-            <div
-              ref={hoverPlayheadRef}
-              className="hover-playhead"
-              data-content="0:00"
-            ></div>
-          </div>
-
-          <div className="controls">
-            <button
-              onClick={prevSong}
-              className="prev prev-next current-btn"
-            >
-              <i className="fas fa-backward"></i>
-            </button>
-
-            <button onClick={playOrPause} className="play current-btn">
-              {!pause ? (
-                <i className="fas fa-play"></i>
-              ) : (
-                <i className="fas fa-pause"></i>
-              )}
-            </button>
-            <button
-              onClick={nextSong}
-              className="next prev-next current-btn"
-            >
-              <i className="fas fa-forward"></i>
-            </button>
-          </div>
-        </div>
-        {/* <div className="play-list">
-          {musicList.map((music, key = 0) => (
-            <div
-              key={key}
-              onClick={() => this.clickAudio(key)}
-              className={
-                "track " +
-                (index === key && !pause ? "current-audio" : "") +
-                (index === key && pause ? "play-now" : "")
-              }
-            >
-              <img className="track-img" src={music.img} />
-              <div className="track-discr">
-                <span className="track-name">{music.name}</span>
-                <span className="track-author">{music.author}</span>
-              </div>
-              <span className="track-duration">
-                {index === key ? currentTime : music.duration}
-              </span>
-            </div>
-          ))}
-        </div> */}
-      </div>
-  </>);
+            <StyledPlayer>
+                <StyledTime>{currentTime}</StyledTime>
+              <StyledTimeline ref={timelineRef}>
+                <StyledPlayHead ref={playheadRef}></StyledPlayHead>
+                <StyledHoverPlayHead
+                  ref={hoverPlayheadRef}
+                  data-content="0:00"
+                ></StyledHoverPlayHead>
+              </StyledTimeline>
+                <StyledTime>{currentSong.duration}</StyledTime>
+            </StyledPlayer>
+          </StyledCenter>
+        </StyledContainerWrapper>
+      </StyledContainer>
+    </>
+  );
 };
+
+const StyledContainer = styled.div`
+  width: 80vw;
+  height: 10vh;
+  position: fixed;
+  margin: 0 10vw;
+  /* bottom: 0; */
+  /* backdrop-filter: blur(10px); */
+  background-color: darkgray;
+  display: flex;
+  align-items: center;
+`;
+
+const StyledContainerWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  padding: 0 20px;
+
+`;
+const StyledCenter = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  margin-left: 120px;
+`;
+const StyledPlayer = styled.div`
+display: flex;
+align-items: center;
+`;
+const StyledImage = styled.img`
+  position: absolute;
+  bottom: 0;
+  width: 100px;
+  height: 100px;
+`;
+
+const StyledSongInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+const StyledSongName = styled.span`
+  color: white;
+`;
+const StyledSongAuthor = styled.span`
+  color: gray;
+`;
+const StyledButton = styled.button`
+  background-color: transparent;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+`;
+
+const StyledControls = styled.div``;
+
+const StyledTime = styled.div`
+  color: white;
+  margin: 0 10px;
+`;
+
+const StyledTimeline = styled.div`
+  position: relative;
+  margin: 0 auto;
+  width: 240px;
+  height: 5px;
+  background: black;
+  border-radius: 5px;
+  cursor: pointer;
+  &:hover {
+    div:nth-child(2) {
+      opacity: 1;
+      &::before {
+        opacity: 1;
+      }
+      &::after {
+        opacity: 1;
+      }
+    }
+  }
+`;
+
+const StyledHoverPlayHead = styled.div`
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  width: 0;
+  height: 5px;
+  opacity: 0;
+  border-radius: 5px;
+  /* background: #274684; */
+  transition: opacity 0.3s;
+  &::before {
+    opacity: 0;
+    content: attr(data-content);
+    display: block;
+    position: absolute;
+    top: -30px;
+    right: -23px;
+    width: 40px;
+    padding: 3px;
+    text-align: center;
+    color: white;
+    background: black;
+    border-radius: calc(20px - 12px);
+  }
+  &::after {
+    opacity: 0;
+    content: "";
+    display: block;
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    border-top: 8px solid black;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+  }
+`;
+
+const StyledPlayHead = styled.div`
+  position: relative;
+  z-index: 2;
+  width: 0;
+  height: 5px;
+  border-radius: 5px;
+  background: white;
+`;
 
 export default Player;
