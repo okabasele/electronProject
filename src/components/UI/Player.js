@@ -343,6 +343,7 @@ const StyledSongData = styled.p`
   white-space: nowrap;
   text-overflow: ellipsis;
   width: 50%;
+  color: #ffffff
 `;
 
 const StyledRight = styled.div`
