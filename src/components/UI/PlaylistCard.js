@@ -17,51 +17,6 @@ const PlaylistCard = ({ title, desc, img }) => {
       </StyledPosRelative>
       <StyledPlaylistTitle>{title}</StyledPlaylistTitle>
       <StyledPlaylistDesc>{desc}</StyledPlaylistDesc>
-      {/* <Link
-      to={isArtist ? "/artist/" + id : "/album/" + id}
-      className="album-container"
-      id="album-container"
-    >
-      <img
-        src={img}
-        alt={title + " cover image"}
-        style={{ borderRadius: isArtist ? "50%" : "" }}
-      />
-      <div className="album-tittle">
-        <p className="white-text">{title}</p>
-      </div>
-      <div className="album-discription">
-        <p className="silvery-text">{discription}</p>
-      </div>
-      <div
-        id="circular-paly-button"
-        onClick={(e) => {
-          e.preventDefault();
-          setPlayList(id);
-        }}
-        style={{
-          visibility: currentPlayingAlbumId == id ? "visible" : "",
-          display: isArtist ? "none" : "flex",
-        }}
-      >
-        <i
-          className="fas fa-play"
-          id="album-floating-play-button"
-          style={{
-            display:
-              isPlaying && currentPlayingAlbumId == id ? "none" : "block",
-          }}
-        ></i>
-        <i
-          className="fas fa-pause"
-          id="album-floating-pause-button"
-          style={{
-            display:
-              isPlaying && currentPlayingAlbumId == id ? "block" : "none",
-          }}
-        ></i>
-      </div>
-    </Link> */}
     </StyledContainer>
   );
 };

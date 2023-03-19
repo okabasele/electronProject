@@ -1,7 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
+import musics from "../../helpers/musics";
+
 const Player = () => {
   const [index, setIndex] = useState(3);
+  const [musicList, setMusicList] = useState(musics);
+  const [currentSong, setCurrentSong] = useState(musics[index]);
   const [currentTime, setCurrentTime] = useState("0:00");
   const [pause, setPause] = useState(false);
   const [shuffle, setShuffle] = useState(false);
@@ -17,39 +21,14 @@ const Player = () => {
   const volumeBarRef = useRef(null);
   const volumeRef = useRef(null);
   const volumeCircleRef = useRef(null);
-  const musicList = [
-    {
-      name: "Nice piano and ukulele",
-      author: "Royalty",
-      img: "https://www.bensound.com/bensound-img/buddy.jpg",
-      audio: "https://www.bensound.com/bensound-music/bensound-buddy.mp3",
-      duration: "2:02",
-    },
-    {
-      name: "Gentle acoustic",
-      author: "Acoustic",
-      img: "https://www.bensound.com/bensound-img/sunny.jpg",
-      audio: "https://www.bensound.com//bensound-music/bensound-sunny.mp3",
-      duration: "2:20",
-    },
-    {
-      name: "Corporate motivational",
-      author: "Corporate",
-      img: "https://www.bensound.com/bensound-img/energy.jpg",
-      audio: "https://www.bensound.com/bensound-music/bensound-energy.mp3",
-      duration: "2:59",
-    },
-    {
-      name: "Slow cinematic",
-      author: "Royalty",
-      img: "https://www.bensound.com/bensound-img/slowmotion.jpg",
-      audio: "https://www.bensound.com/bensound-music/bensound-slowmotion.mp3",
-      duration: "3:26",
-    },
-  ];
-  const currentSong = musicList[index];
 
   useEffect(() => {
+    if (localStorage.getItem("musicList")) {
+      setMusicList(JSON.parse(localStorage.getItem("musicList")));
+      setIndex(JSON.parse(localStorage.getItem("index")));
+      setCurrentSong(JSON.parse(localStorage.getItem("musicList"))[JSON.parse(localStorage.getItem("index"))]);
+    }
+    
     console.log({ playerRef, timelineRef });
     if (
       playerRef === null ||
@@ -71,7 +50,7 @@ const Player = () => {
         timelineRef.current.removeEventListener("click", changeCurrentTime);
       };
     }
-  }, [loading]);
+  }, [loading, musicList]);
 
   const changeCurrentTime = (e) => {
     const duration = playerRef.current.duration;
@@ -156,7 +135,6 @@ const Player = () => {
       setIsMuted(false);
       volumeRef.current.style.width = newVolume + "%";
       volumeCircleRef.current.style.left = newVolume + "%";
-
     }
   };
   const handleVolume = (e) => {
@@ -170,7 +148,6 @@ const Player = () => {
     setIsMuted(false);
     volumeRef.current.style.width = newVolume + "%";
     volumeCircleRef.current.style.left = newVolume + "%";
-    
   };
 
   const handleLikeSong = (e) => {
@@ -277,7 +254,7 @@ const Player = () => {
         </StyledTimeContainer>
       </StyledCenter>
       <StyledRight>
-        <StyledControlButton onClick={handleSound} >
+        <StyledControlButton onClick={handleSound}>
           <StyledIconWrapper>
             {!isMuted && volume > 50 ? (
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
@@ -295,7 +272,7 @@ const Player = () => {
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
                 <path d="M301.1 34.8C312.6 40 320 51.4 320 64V448c0 12.6-7.4 24-18.9 29.2s-25 3.1-34.4-5.3L131.8 352H64c-35.3 0-64-28.7-64-64V224c0-35.3 28.7-64 64-64h67.8L266.7 40.1c9.4-8.4 22.9-10.4 34.4-5.3zM425 167l55 55 55-55c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-55 55 55 55c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-55-55-55 55c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l55-55-55-55c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0z" />
               </svg>
-            ) }
+            )}
           </StyledIconWrapper>
         </StyledControlButton>
         <StyledVolumeBarContainer ref={volumeBarRef} onClick={handleVolume}>
@@ -343,7 +320,7 @@ const StyledSongData = styled.p`
   white-space: nowrap;
   text-overflow: ellipsis;
   width: 50%;
-  color: #ffffff
+  color: #ffffff;
 `;
 
 const StyledRight = styled.div`
@@ -468,23 +445,23 @@ const StyledPlayHeadCircle = styled.div`
 `;
 
 const StyledVolumeBarContainer = styled.div`
-cursor: pointer;
-width: 70px;
-height: 4px;
-max-width: 100px;
-min-width: 60px;
-background-color: #535353;
-position: relative;
- :hover {
-  span{
-    display: block;
+  cursor: pointer;
+  width: 70px;
+  height: 4px;
+  max-width: 100px;
+  min-width: 60px;
+  background-color: #535353;
+  position: relative;
+  :hover {
+    span {
+      display: block;
+    }
   }
- }
 `;
 const StyledVolumeBar = styled.div`
-height: 4px;
-background-color: #b3b3b3;
-width: 0px;
+  height: 4px;
+  background-color: #b3b3b3;
+  width: 0px;
 `;
 const StyledVolumeBarCircle = styled.span`
   width: 12px;

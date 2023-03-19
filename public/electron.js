@@ -1,5 +1,5 @@
 // Module to control the application lifecycle and the native browser window.
-const { app, BrowserWindow, protocol } = require("electron");
+const { app, BrowserWindow, protocol, ipcMain, dialog } = require("electron");
 const path = require("path");
 const url = require("url");
 
@@ -14,6 +14,22 @@ function createWindow() {
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: true,
     },
+  });
+
+  ipcMain.on("open-file-dialog", (event) => {
+    dialog
+      .showOpenDialog(mainWindow, {
+        properties: ["openFile"],
+        filters: [{ name: "Sound", extensions: ["mp3"] }],
+      })
+      .then((result) => {
+        //se lance quand on selectionne un fichier
+        event.reply("selected-file", result);
+      })
+      .catch((err) => {
+        console.log(err);
+        dialog.showErrorBox("Error", "Something went wrong");
+      });
   });
 
   // In production, set the initial browser path to the local bundle generated
