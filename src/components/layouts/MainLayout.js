@@ -1,6 +1,6 @@
 import React from 'react'
 import SideBar from '../partials/SideBar'
-import Player from '../blocks/Player'
+import Player from '../UI/Player'
 
 const MainLayout = ({children}) => {
   return (
