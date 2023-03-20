@@ -22,12 +22,7 @@ const Player = () => {
   const volumeCircleRef = useRef(null);
   const currentSong = musicList[index];
 
-  useEffect(() => {
-    if (localStorage.getItem("musicList")) {
-      setMusicList(JSON.parse(localStorage.getItem("musicList")));
-      setIndex(0);
-    }
-    
+  useEffect(() => {    
     console.log({ playerRef, timelineRef, musicList });
     if (
       playerRef === null ||
@@ -49,7 +44,7 @@ const Player = () => {
         timelineRef.current.removeEventListener("click", changeCurrentTime);
       };
     }
-  }, [loading, musicList,index]);
+  }, [loading]);
 
   const changeCurrentTime = (e) => {
     const duration = playerRef.current.duration;

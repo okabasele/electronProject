@@ -41,7 +41,7 @@ function createWindow() {
               .join(":");
             event.reply("selected-file", {
               audio: `safe-file://${result.filePaths[0]}`,
-              title: metadata.common.title,
+              name: metadata.common.title,
               author: metadata.common.albumartist,
               duration,
               img:"https://www.bensound.com/bensound-img/slowmotion.jpg"

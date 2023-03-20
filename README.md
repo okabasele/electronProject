@@ -7,6 +7,5 @@
 - Importer une musique
 
 ### Fonctionnalités futures
-- API
 - Changer de playlist
 - Importer les paroles de la chanson

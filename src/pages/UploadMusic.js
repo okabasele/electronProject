@@ -26,11 +26,13 @@ const UploadMusic = () => {
       const musicList = JSON.parse(localStorage.getItem("musicList"));
       if (musicList === null) {
         localStorage.setItem("musicList", JSON.stringify([fileData]));
+        setOnPlayingList([fileData]);
       } else {
         localStorage.setItem(
           "musicList",
           JSON.stringify([...musicList, fileData])
         );
+        setOnPlayingList([...musicList, fileData]);
       }
     }
     console.log({ fileData });
