@@ -17,8 +17,6 @@ const Home = () => {
     );
   });
 
-  console.log({ playlistsItemsJsx,playlistsTitleJsx });
-
   return (
     <>
       <StyledTitle>Les playlists du moments</StyledTitle>

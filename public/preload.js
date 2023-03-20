@@ -19,5 +19,17 @@ process.once("loaded", () => {
     removeEventListener: () => {
       ipcRenderer.removeAllListeners("selected-file");
     },
+    alertErrorNotification: () =>
+    new Notification(
+      "Erreur !",
+      {
+      body: "Le fichier audio n'a pas pu être ajouté",
+    }),
+    alertSuccessNotification: () =>
+    new Notification(
+      "Bien joué !",
+      {
+      body: "Le fichier audio a été ajouté avec succès",
+    }),
   });
 });
