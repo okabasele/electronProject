@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import styled from "styled-components";
 
-const SingleSong = ({img,name,author,duration,id}) => {
+const SingleSong = ({img,name,author,duration,id,handleClick}) => {
     const [isHovered, setisHovered] = useState(false);
 
   return (
     <StyledSongContainer onMouseOver={e=>setisHovered(true)} onMouseOut={e=>setisHovered(false)}  >
     <StyledContent>
-      <StyledButtonIcon>
+      <StyledButtonIcon onClick={handleClick} >
         {
           isHovered ? (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">

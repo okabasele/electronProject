@@ -1,28 +1,33 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import musics from "../../helpers/musics";
+import { AudioContext } from "../../context/AudioContext";
 
 const Player = () => {
-  const [index, setIndex] = useState(3);
-  const [musicList, setMusicList] = useState(musics);
+  const {
+    playerRef,
+    activePlaylist,
+    index,
+    setIndex,
+    activeSong,
+    pause,
+    setPause,
+  } = useContext(AudioContext);
   const [currentTime, setCurrentTime] = useState("0:00");
-  const [pause, setPause] = useState(false);
   const [shuffle, setShuffle] = useState(false);
   const [repeat, setRepeat] = useState(false);
   const [loading, setLoading] = useState(false);
   const [volume, setVolume] = useState(100);
   const [isMuted, setIsMuted] = useState(false);
   const [volumeBeforeMuted, setVolumeBeforeMuted] = useState(1);
-  const playerRef = useRef(null);
   const timelineRef = useRef(null);
   const playheadRef = useRef(null);
   const playheadCircleRef = useRef(null);
   const volumeBarRef = useRef(null);
   const volumeRef = useRef(null);
   const volumeCircleRef = useRef(null);
-  const currentSong = musicList[index];
 
-  useEffect(() => {    
+  useEffect(() => {
+    console.log({ playerRef, timelineRef, activeSong, activePlaylist, index });
     if (
       playerRef === null ||
       playerRef.current === null ||
@@ -43,7 +48,7 @@ const Player = () => {
         timelineRef.current.removeEventListener("click", changeCurrentTime);
       };
     }
-  }, [loading]);
+  }, [activePlaylist, activeSong, loading]);
 
   const changeCurrentTime = (e) => {
     const duration = playerRef.current.duration;
@@ -86,7 +91,7 @@ const Player = () => {
 
   const nextSong = () => {
     console.log("nextSong");
-    setIndex((index + 1) % musicList.length);
+    setIndex((index + 1) % activePlaylist.length);
     updatePlayer();
     if (pause) {
       playerRef.current.play();
@@ -96,7 +101,7 @@ const Player = () => {
   const prevSong = () => {
     console.log("prevSong");
 
-    setIndex((index + musicList.length - 1) % musicList.length);
+    setIndex((index + activePlaylist.length - 1) % activePlaylist.length);
     updatePlayer();
     if (pause) {
       playerRef.current.play();
@@ -110,31 +115,28 @@ const Player = () => {
       playerRef.current.pause();
     }
     setPause(!pause);
-    console.log("PLAY OR PAUSE \n", { pause, playerRef });
+    console.log("PLAY OR PAUSE \n", { pause, playerRef,activeSong });
+    console.log("Player ref src \n", playerRef.current.src);
   };
 
   const handleSound = () => {
-    const audio = new Audio(currentSong.audio);
+    const audio = playerRef.current.audio;
     if (!isMuted) {
       setVolumeBeforeMuted(audio.volume);
       audio.muted = true;
       const newVolume = 0;
       setVolume(newVolume);
       setIsMuted(true);
-      volumeRef.current.style.width = newVolume + "%";
-      volumeCircleRef.current.style.left = newVolume + "%";
     } else {
       audio.volume = volumeBeforeMuted;
       audio.muted = false;
       const newVolume = (volumeBeforeMuted / 1) * 100;
       setVolume(newVolume);
       setIsMuted(false);
-      volumeRef.current.style.width = newVolume + "%";
-      volumeCircleRef.current.style.left = newVolume + "%";
     }
   };
   const handleVolume = (e) => {
-    const audio = new Audio(currentSong.audio);
+    const audio = playerRef.current.audio;
     const ratio = e.nativeEvent.offsetX / volumeBarRef.current.offsetWidth;
     audio.volume = ratio;
     const newVolume = ratio * 100;
@@ -142,8 +144,6 @@ const Player = () => {
     //if user  try to change the volume and the song is muted it should unmute
     audio.muted = false;
     setIsMuted(false);
-    volumeRef.current.style.width = newVolume + "%";
-    volumeCircleRef.current.style.left = newVolume + "%";
   };
 
   const handleLikeSong = (e) => {
@@ -181,10 +181,10 @@ const Player = () => {
   return (
     <StyledContainer>
       <StyledLeft>
-        <StyledImage src={currentSong.img} />
+        <StyledImage src={activeSong && activeSong.img} alt="song cover" />
         <StyledSongInfo>
-          <StyledSongData>{currentSong.name}</StyledSongData>
-          <StyledSongData>{currentSong.author}</StyledSongData>
+          <StyledSongData>{activeSong && activeSong.name}</StyledSongData>
+          <StyledSongData>{activeSong && activeSong.author}</StyledSongData>
           <StyledLikeButton onClick={(e) => handleLikeSong(e)}>
             <StyledIconLikeWrapper>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -244,9 +244,7 @@ const Player = () => {
             <StyledPlayHead ref={playheadRef} />
             <StyledPlayHeadCircle ref={playheadCircleRef} />
           </StyledTimeBarContainer>
-          <StyledTimeStamp>
-            {currentSong && currentSong.duration}
-          </StyledTimeStamp>
+          <StyledTimeStamp>{activeSong && activeSong.duration}</StyledTimeStamp>
         </StyledTimeContainer>
       </StyledCenter>
       <StyledRight>
@@ -272,11 +270,15 @@ const Player = () => {
           </StyledIconWrapper>
         </StyledControlButton>
         <StyledVolumeBarContainer ref={volumeBarRef} onClick={handleVolume}>
-          <StyledVolumeBar ref={volumeRef} />
-          <StyledVolumeBarCircle ref={volumeCircleRef} />
+          <StyledVolumeBar width={volume + "%"} ref={volumeRef} />
+          <StyledVolumeBarCircle left={volume + "%"} ref={volumeCircleRef} />
         </StyledVolumeBarContainer>
       </StyledRight>
-      <audio ref={playerRef} src={currentSong.audio} onEnded={nextSong}></audio>
+      <audio
+        ref={playerRef}
+        src={activeSong && activeSong.audio}
+        onEnded={nextSong}
+      ></audio>
     </StyledContainer>
   );
 };
@@ -457,7 +459,7 @@ const StyledVolumeBarContainer = styled.div`
 const StyledVolumeBar = styled.div`
   height: 4px;
   background-color: #b3b3b3;
-  width: 0px;
+  width: ${(props) => props.width};
 `;
 const StyledVolumeBarCircle = styled.span`
   width: 12px;
@@ -468,6 +470,7 @@ const StyledVolumeBarCircle = styled.span`
   top: -4px;
   display: none;
   margin-left: -6px;
+  left: ${(props) => props.left};
 `;
 
 export default Player;

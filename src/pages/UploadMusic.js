@@ -1,13 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import Loading from "../components/UI/Loading";
 import PlaylistContainer from "../components/UI/PlaylistContainer";
 import PlaylistHeader from "../components/UI/PlaylistHeader";
+import { AudioContext } from "../context/AudioContext";
 
 const UploadMusic = () => {
-  const { open, getFileData, removeEventListener,alertErrorNotification,alertSuccessNotification } = window.dialog;
+  const {
+    open,
+    getFileData,
+    removeEventListener,
+    alertErrorNotification,
+    alertSuccessNotification,
+  } = window.dialog;
+  const { updatePlayerContext } = useContext(AudioContext);
   const [fileData, setFile] = useState({});
-  const [onPlayingList, setOnPlayingList] = useState([]);
+  const [uploadedList, setUploadedList] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const openDialog = () => {
@@ -16,35 +24,37 @@ const UploadMusic = () => {
     open();
     getFileData(setFile);
   };
-  
+
   useEffect(() => {
-    setOnPlayingList(JSON.parse(localStorage.getItem("musicList")));
+    setUploadedList(JSON.parse(localStorage.getItem("musicList")));
     return () => {
       removeEventListener();
     };
   }, []);
-  
+
   useEffect(() => {
     if (fileData?.audio) {
       setLoading(false);
       const musicList = JSON.parse(localStorage.getItem("musicList"));
       if (musicList === null) {
-        localStorage.setItem("musicList", JSON.stringify([fileData]));
-        setOnPlayingList([fileData]);
+        const toInsert = { ...fileData, id: 1 };
+        localStorage.setItem("musicList", JSON.stringify([toInsert]));
+        setUploadedList([toInsert]);
         alertSuccessNotification();
-        console.log(`Le fichier audio ${fileData.audio} a été ajouté`);
+        console.log(`Le fichier audio ${toInsert.audio} a été ajouté`);
       } else {
         if (musicList.find((music) => music.audio === fileData.audio)) {
           alertErrorNotification();
           console.log(`Le fichier audio ${fileData.audio} est déja présent`);
         } else {
+          const toInsert = { ...fileData, id: musicList.length + 1 };
           localStorage.setItem(
             "musicList",
-            JSON.stringify([...musicList, fileData])
-            );
-            setOnPlayingList([...musicList, fileData]);
-            alertSuccessNotification();
-            console.log(`Le fichier audio ${fileData.audio} a été ajouté`);
+            JSON.stringify([...musicList, toInsert])
+          );
+          setUploadedList([...musicList, toInsert]);
+          alertSuccessNotification();
+          console.log(`Le fichier audio ${toInsert.audio} a été ajouté`);
         }
       }
       setFile({});
@@ -58,12 +68,13 @@ const UploadMusic = () => {
         title="Titres importés"
         img="https://t.scdn.co/images/3099b3803ad9496896c43f22fe9be8c4.png"
         openDialog={openDialog}
+        handleClick={() => updatePlayerContext(uploadedList[0], uploadedList)}
       />
-     <Loading isLoad={loading} />
-      
-      {onPlayingList ? (
+      <Loading isLoad={loading} />
+
+      {uploadedList ? (
         <>
-          <PlaylistContainer songsList={onPlayingList} />
+          <PlaylistContainer songsList={uploadedList} />
         </>
       ) : (
         <StyledTitle>Vous n'avez pas encore importé de musique</StyledTitle>

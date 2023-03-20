@@ -1,12 +1,17 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import SingleSong from "./SingleSong";
+import { AudioContext } from "../../context/AudioContext";
 
 const PlaylistContainer = ({ songsList }) => {
+  const { 
+    updatePlayerContext
+  
+  } = useContext(AudioContext);
   return (
     <StyledContainer>
-      {songsList.map((song, id) => (
-        <SingleSong key={id} img={song.img} name={song.name} author={song.author} duration={song.duration} id={id+1} />
+      {songsList.map((song) => (
+        <SingleSong handleClick={()=> updatePlayerContext(song,songsList)} key={song.id} img={song.img} name={song.name} author={song.author} duration={song.duration} id={song.id} />
       ))}
     </StyledContainer>
   );
