@@ -1,7 +1,9 @@
 // Module to control the application lifecycle and the native browser window.
-const { app, BrowserWindow, protocol } = require("electron");
+const { app, BrowserWindow, protocol, ipcMain, dialog } = require("electron");
 const path = require("path");
 const url = require("url");
+const mm = require("music-metadata");
+const util = require("util");
 
 // Create the native browser window.
 function createWindow() {
@@ -14,6 +16,46 @@ function createWindow() {
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: true,
     },
+  });
+
+  ipcMain.on("open-file-dialog", (event) => {
+    dialog
+      .showOpenDialog(mainWindow, {
+        properties: ["openFile"],
+        filters: [{ name: "Sound", extensions: ["mp3"] }],
+      })
+      .then((result) => {
+        console.log(result.filePaths[0]);
+        //se lance quand on selectionne un fichier
+        mm.parseFile(result.filePaths[0])
+          .then((metadata) => {
+            console.log("metadata");
+            console.log(metadata.format.duration);
+
+            const d = new Date(metadata.format.duration * 1000);
+            const duration = d
+              .toTimeString()
+              .split(" ")[0]
+              .split(":")
+              .slice(1)
+              .join(":");
+            event.reply("selected-file", {
+              audio: `safe-file://${result.filePaths[0]}`,
+              title: metadata.common.title,
+              author: metadata.common.albumartist,
+              duration,
+              img:"https://www.bensound.com/bensound-img/slowmotion.jpg"
+            });
+          })
+          .catch((err) => {
+            console.log("err");
+            console.error(err.message);
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+        dialog.showErrorBox("Error", "Something went wrong");
+      });
   });
 
   // In production, set the initial browser path to the local bundle generated
