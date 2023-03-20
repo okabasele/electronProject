@@ -3,13 +3,14 @@ const { app, BrowserWindow, protocol, ipcMain, dialog } = require("electron");
 const path = require("path");
 const url = require("url");
 const mm = require("music-metadata");
-const util = require("util");
 
 // Create the native browser window.
 function createWindow() {
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 900,
+    height: 700,
+    title: "iTunes",
+    icon: __dirname +"/iTunes_logo.png",
     // Set the path of an additional "preload" script that can be used to
     // communicate between node-land and browser-land.
     webPreferences: {
@@ -39,13 +40,15 @@ function createWindow() {
               .split(":")
               .slice(1)
               .join(":");
-            event.reply("selected-file", {
-              audio: `safe-file://${result.filePaths[0]}`,
-              name: metadata.common.title,
-              author: metadata.common.albumartist,
-              duration,
-              img:"https://www.bensound.com/bensound-img/slowmotion.jpg"
-            });
+              const filedata = {
+                audio: `safe-file://${result.filePaths[0]}`,
+                name: metadata.common.title,
+                author: metadata.common.albumartist,
+                duration,
+                img:"https://www.bensound.com/bensound-img/slowmotion.jpg"
+              }
+              console.log("Le fichier audio selectionné est : ", filedata);
+            event.reply("selected-file", filedata);
           })
           .catch((err) => {
             console.log("err");

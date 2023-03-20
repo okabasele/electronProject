@@ -23,7 +23,6 @@ const Player = () => {
   const currentSong = musicList[index];
 
   useEffect(() => {    
-    console.log({ playerRef, timelineRef, musicList });
     if (
       playerRef === null ||
       playerRef.current === null ||
