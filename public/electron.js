@@ -2,6 +2,8 @@
 const { app, BrowserWindow, protocol, ipcMain, dialog } = require("electron");
 const path = require("path");
 const url = require("url");
+const mm = require("music-metadata");
+const util = require("util");
 
 // Create the native browser window.
 function createWindow() {
@@ -23,8 +25,32 @@ function createWindow() {
         filters: [{ name: "Sound", extensions: ["mp3"] }],
       })
       .then((result) => {
+        console.log(result.filePaths[0]);
         //se lance quand on selectionne un fichier
-        event.reply("selected-file", result);
+        mm.parseFile(result.filePaths[0])
+          .then((metadata) => {
+            console.log("metadata");
+            console.log(metadata.format.duration);
+
+            const d = new Date(metadata.format.duration * 1000);
+            const duration = d
+              .toTimeString()
+              .split(" ")[0]
+              .split(":")
+              .slice(1)
+              .join(":");
+            event.reply("selected-file", {
+              audio: `safe-file://${result.filePaths[0]}`,
+              title: metadata.common.title,
+              author: metadata.common.albumartist,
+              duration,
+              img:"https://www.bensound.com/bensound-img/slowmotion.jpg"
+            });
+          })
+          .catch((err) => {
+            console.log("err");
+            console.error(err.message);
+          });
       })
       .catch((err) => {
         console.log(err);

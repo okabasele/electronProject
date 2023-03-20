@@ -5,7 +5,6 @@ import musics from "../../helpers/musics";
 const Player = () => {
   const [index, setIndex] = useState(3);
   const [musicList, setMusicList] = useState(musics);
-  const [currentSong, setCurrentSong] = useState(musics[index]);
   const [currentTime, setCurrentTime] = useState("0:00");
   const [pause, setPause] = useState(false);
   const [shuffle, setShuffle] = useState(false);
@@ -21,15 +20,15 @@ const Player = () => {
   const volumeBarRef = useRef(null);
   const volumeRef = useRef(null);
   const volumeCircleRef = useRef(null);
+  const currentSong = musicList[index];
 
   useEffect(() => {
     if (localStorage.getItem("musicList")) {
       setMusicList(JSON.parse(localStorage.getItem("musicList")));
-      setIndex(JSON.parse(localStorage.getItem("index")));
-      setCurrentSong(JSON.parse(localStorage.getItem("musicList"))[JSON.parse(localStorage.getItem("index"))]);
+      setIndex(0);
     }
     
-    console.log({ playerRef, timelineRef });
+    console.log({ playerRef, timelineRef, musicList });
     if (
       playerRef === null ||
       playerRef.current === null ||
@@ -50,7 +49,7 @@ const Player = () => {
         timelineRef.current.removeEventListener("click", changeCurrentTime);
       };
     }
-  }, [loading, musicList]);
+  }, [loading, musicList,index]);
 
   const changeCurrentTime = (e) => {
     const duration = playerRef.current.duration;
@@ -92,6 +91,7 @@ const Player = () => {
   };
 
   const nextSong = () => {
+    console.log("nextSong");
     setIndex((index + 1) % musicList.length);
     updatePlayer();
     if (pause) {
@@ -100,6 +100,8 @@ const Player = () => {
   };
 
   const prevSong = () => {
+    console.log("prevSong");
+
     setIndex((index + musicList.length - 1) % musicList.length);
     updatePlayer();
     if (pause) {

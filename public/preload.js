@@ -11,9 +11,9 @@ process.once("loaded", () => {
     open: () => {
       ipcRenderer.send("open-file-dialog");
     },
-    getFilePath: (setState) => {
-      ipcRenderer.on("selected-file", (event, path) => {
-        setState(`safe-file://${path}`);
+    getFileData: (setState) => {
+      ipcRenderer.on("selected-file", (event, data) => {
+        setState(data);
       });
     },
     removeEventListener: () => {
