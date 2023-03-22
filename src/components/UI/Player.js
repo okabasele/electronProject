@@ -27,7 +27,7 @@ const Player = () => {
   const volumeCircleRef = useRef(null);
 
   useEffect(() => {
-    console.log({ playerRef, timelineRef, activeSong, activePlaylist, index });
+
     if (
       playerRef === null ||
       playerRef.current === null ||
@@ -115,7 +115,7 @@ const Player = () => {
       playerRef.current.pause();
     }
     setPause(!pause);
-    console.log("PLAY OR PAUSE \n", { pause, playerRef,activeSong });
+    console.log("PLAY OR PAUSE \n", { pause, playerRef, activeSong });
     console.log("Player ref src \n", playerRef.current.src);
   };
 

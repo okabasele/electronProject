@@ -19,7 +19,6 @@ const UploadMusic = () => {
   const [loading, setLoading] = useState(false);
 
   const openDialog = () => {
-    console.log("handle submit!");
     setLoading(true);
     open();
     getFileData(setFile);
@@ -59,14 +58,13 @@ const UploadMusic = () => {
       }
       setFile({});
     }
-    console.log({ fileData });
   }, [fileData, loading]);
 
   return (
     <>
       <PlaylistHeader
         title="Titres importés"
-        img="https://t.scdn.co/images/3099b3803ad9496896c43f22fe9be8c4.png"
+        img="https://community.spotify.com/t5/image/serverpage/image-id/25294i2836BD1C1A31BDF2?v=v2"
         openDialog={openDialog}
         handleClick={() => updatePlayerContext(uploadedList[0], uploadedList)}
       />

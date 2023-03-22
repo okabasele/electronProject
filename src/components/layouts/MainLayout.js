@@ -32,7 +32,6 @@ const StyledContainer = styled.div`
   height: 100vh;
   padding-bottom: 120px;
   padding-left: 240px;
-  overflow-y: auto;
   padding-top: 60px;
 `;
 

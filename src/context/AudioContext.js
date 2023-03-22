@@ -17,11 +17,10 @@ export const AudioContextProvider = ({ children }) => {
   const activeSong = activePlaylist[index];
 
   const updatePlayerContext = (song, playlist) => {
-    console.log({ song, playlist });
     setActivePlaylist(playlist);
     setIndex(song.id - 1);
     setPause(false);
-  playerRef.current.load();
+    playerRef.current.load();
   };
 
   const context = {

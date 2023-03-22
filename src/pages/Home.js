@@ -11,25 +11,18 @@ const Home = () => {
     })
   })
 
-  const playlistsTitleJsx = playlists.map((playlist, id) => {
-    return (
-        <StyledPlaylistTitle key={id} >{playlist.category}</StyledPlaylistTitle>
-    );
-  });
-
   return (
     <>
       <StyledTitle>Les playlists du moments</StyledTitle>
         {
-          playlistsTitleJsx.map((title, id) => {
-
+          playlists.map(({category}, id) => {
             return (
-              <>
-                {title}
+              <div key={id}>
+                <StyledPlaylistTitle>{category}</StyledPlaylistTitle>
                 <StyledPlaylistGrid>
                   {playlistsItemsJsx[id]}
                 </StyledPlaylistGrid>
-              </>
+              </div>
             )
           })
         }
