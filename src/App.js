@@ -4,6 +4,7 @@ import { AudioContextProvider } from "./context/AudioContext.js";
 import Home from "./pages/Home.js";
 import Search from "./pages/Search.js";
 import UploadMusic from "./pages/UploadMusic.js";
+import Liked from "./pages/Liked.js";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route exact path="/" element={<Home />} />
         <Route path="/search" element={<Search />} />
         <Route path="/upload" element={<UploadMusic />} />
+        <Route path="/liked" element={<Liked />} />
       </Routes>
 
     </MainLayout>
