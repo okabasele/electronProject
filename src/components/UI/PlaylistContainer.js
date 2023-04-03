@@ -11,7 +11,7 @@ const PlaylistContainer = ({ songsList }) => {
   return (
     <StyledContainer>
       {songsList.map((song) => (
-        <SingleSong handleClick={()=> updatePlayerContext(song,songsList)} key={song.id} img={song.img} name={song.name} author={song.author} duration={song.duration} id={song.id} />
+        <SingleSong key={song.id} handleClick={()=> updatePlayerContext(song,songsList)} img={song.img} name={song.name} author={song.author} duration={song.duration} id={song.id} />
       ))}
     </StyledContainer>
   );

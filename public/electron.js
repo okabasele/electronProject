@@ -10,7 +10,7 @@ function createWindow() {
     width: 900,
     height: 700,
     title: "iTunes",
-    icon: __dirname +"/iTunes_logo.png",
+    icon: __dirname +"/images/iTunes_logo.png",
     // Set the path of an additional "preload" script that can be used to
     // communicate between node-land and browser-land.
     webPreferences: {

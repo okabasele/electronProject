@@ -1,5 +1,5 @@
 import { createContext, useState, useRef } from "react";
-import musics from "../helpers/musics";
+import musics from "../data/musics";
 
 export const AudioContext = createContext({
   playerRef: null,
@@ -18,7 +18,7 @@ export const AudioContextProvider = ({ children }) => {
 
   const updatePlayerContext = (song, playlist) => {
     setActivePlaylist(playlist);
-    setIndex(song.id - 1);
+    setIndex(song.id-1);
     setPause(false);
     playerRef.current.load();
   };

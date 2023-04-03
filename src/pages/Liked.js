@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import PlaylistContainer from '../components/UI/PlaylistContainer'
 import PlaylistHeader from '../components/UI/PlaylistHeader'
 import { AudioContext } from '../context/AudioContext';
-import musics from '../helpers/musics';
+import musics from '../data/musics';
 
 const Liked = () => {
   const { updatePlayerContext } = useContext(AudioContext);

@@ -29,7 +29,6 @@ body,* {
 
 const StyledContainer = styled.div`
   background-color: #121212;
-  height: 100vh;
   padding-bottom: 120px;
   padding-left: 240px;
   padding-top: 60px;
