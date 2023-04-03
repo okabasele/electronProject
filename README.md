@@ -5,7 +5,6 @@
 - Lecteur audio
 - Importer une musique
 
-### Fonctionnalités futures
+### 7 avril
 - Lire l'audio qu'on clique
 - Changer de playlist
-- Importer les paroles de la chanson
