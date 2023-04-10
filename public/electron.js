@@ -10,7 +10,7 @@ function createWindow() {
     width: 900,
     height: 700,
     title: "iTunes",
-    icon: __dirname +"/iTunes_logo.png",
+    icon: __dirname +"/images/iTunes_logo.png",
     // Set the path of an additional "preload" script that can be used to
     // communicate between node-land and browser-land.
     webPreferences: {
@@ -94,12 +94,33 @@ function setupLocalFilesNormalizerProxy() {
   );
 }
 
+/* Here is the explanation for the code below:
+1. First, the protocol is registered using the registerFileProtocol method.
+2. The callback function is invoked with a URL that is provided as a parameter.
+3. The URL is then used to load the file that is available on the local machine. */
+// Register a custom protocol for loading local files.
+const localFileProtocol =  () => {
+  const protocolName = 'safe-file'
+  // https://www.electronjs.org/fr/docs/latest/api/protocol#protocolregisterfileprotocolscheme-handler
+  protocol.registerFileProtocol(protocolName, (request, callback) => {
+    const url = request.url.replace(`${protocolName}://`, '')
+    try {
+      return callback(decodeURIComponent(url))
+    }
+    catch (error) {
+      // Handle the error as needed
+      console.error(error)
+    }
+  })
+}
+
 // This method will be called when Electron has finished its initialization and
 // is ready to create the browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   createWindow();
   setupLocalFilesNormalizerProxy();
+  localFileProtocol();
 
   app.on("activate", function () {
     // On macOS it's common to re-create a window in the app when the

@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import GenreCard from "../components/UI/GenreCard";
-import genres from "../helpers/genres";
+import genres from "../data/genres";
 
 const Search = () => {
   return (
