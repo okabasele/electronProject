@@ -120,7 +120,7 @@ const Player = () => {
   };
 
   const handleSound = () => {
-    const audio = playerRef.current.audio;
+    const audio = playerRef.current;
     if (!isMuted) {
       setVolumeBeforeMuted(audio.volume);
       audio.muted = true;
@@ -136,7 +136,7 @@ const Player = () => {
     }
   };
   const handleVolume = (e) => {
-    const audio = playerRef.current.audio;
+    const audio = playerRef.current;
     const ratio = e.nativeEvent.offsetX / volumeBarRef.current.offsetWidth;
     audio.volume = ratio;
     const newVolume = ratio * 100;
@@ -269,7 +269,7 @@ const Player = () => {
             )}
           </StyledIconWrapper>
         </StyledControlButton>
-        <StyledVolumeBarContainer ref={volumeBarRef} onClick={handleVolume}>
+        <StyledVolumeBarContainer ref={volumeBarRef} onClick={(e)=>handleVolume(e)}>
           <StyledVolumeBar width={volume + "%"} ref={volumeRef} />
           <StyledVolumeBarCircle left={volume + "%"} ref={volumeCircleRef} />
         </StyledVolumeBarContainer>
